@@ -1,19 +1,18 @@
 const CACHE_NAME = 'weather-pwa-v1';
+const BASE = '/weather-pwa';
 const APP_SHELL = [
-  '/',
-  '/index.html',
-  '/styles.css',
-  '/app.js',
-  '/offline.html',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png',
-  '/manifest.webmanifest'
+  `${BASE}/`,
+  `${BASE}/index.html`,
+  `${BASE}/styles.css`,
+  `${BASE}/app.js`,
+  `${BASE}/offline.html`,
+  `${BASE}/icons/icon-192.png`,
+  `${BASE}/icons/icon-512.png`,
+  `${BASE}/manifest.webmanifest`
 ];
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL))
-  );
+  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL)));
   self.skipWaiting();
 });
 
@@ -26,7 +25,6 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   const { request } = event;
-  // Network-first for API, cache-first for app shell
   if (request.url.includes('api.open-meteo.com')) {
     event.respondWith(
       fetch(request).then(res => {
@@ -37,7 +35,7 @@ self.addEventListener('fetch', (event) => {
     );
   } else {
     event.respondWith(
-      caches.match(request).then(cached => cached || fetch(request).catch(() => caches.match('/offline.html')))
+      caches.match(request).then(cached => cached || fetch(request).catch(() => caches.match(`${BASE}/offline.html`)))
     );
   }
 });

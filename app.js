@@ -1,15 +1,28 @@
-// Register the service worker for offline & install prompt
+
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js');
+  const basePath = (() => {
+    const p = location.pathname;
+    if (/\.[a-z0-9]+$/i.test(p)) {
+      return p.slice(0, p.lastIndexOf('/') + 1);
+    }
+    return p.endsWith('/') ? p : p + '/';
+  })();
+
+  const swUrl = new URL('sw.js', location.origin + basePath).toString();
+
+  navigator.serviceWorker.register(swUrl, { scope: basePath })
+    .catch(err => console.error('SW register failed:', err));
 }
 
 let deferredPrompt;
 const installBtn = document.getElementById('installBtn');
+
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
-  installBtn.hidden = false;
+  if (installBtn) installBtn.hidden = false;
 });
+
 installBtn?.addEventListener('click', async () => {
   if (!deferredPrompt) return;
   deferredPrompt.prompt();
@@ -18,8 +31,9 @@ installBtn?.addEventListener('click', async () => {
   installBtn.hidden = true;
 });
 
-const el = (id) => document.getElementById(id);
-const statusEl = el('status');
+// UI helpers
+const $ = (id) => document.getElementById(id);
+const statusEl = $('status');
 const nowCard = document.querySelector('.now');
 const forecastCard = document.querySelector('.forecast');
 
@@ -36,11 +50,8 @@ const WMO = {
   95:['Thunderstorm','⛈️'],96:['Thunder w/ hail','⛈️'],99:['Thunder w/ hail','⛈️']
 };
 
-function fmtTemp(v){return Math.round(v) + '°'}
-function dayName(dateStr){
-  const d = new Date(dateStr);
-  return d.toLocaleDateString(undefined,{weekday:'short'});
-}
+const fmtTemp = (v) => Math.round(v) + '°';
+const dayName = (dateStr) => new Date(dateStr).toLocaleDateString(undefined,{weekday:'short'});
 
 async function getWeather(lat, lon){
   const url = new URL('https://api.open-meteo.com/v1/forecast');
@@ -60,9 +71,14 @@ async function init(){
   try{
     statusEl.textContent = 'Requesting location…';
     const pos = await new Promise((resolve, reject)=>{
+      if (!navigator.geolocation) {
+        reject(new Error('Geolocation unavailable'));
+        return;
+      }
       navigator.geolocation.getCurrentPosition(resolve, reject, {enableHighAccuracy:true, timeout:10000});
     });
-    const {latitude:lat, longitude:lon} = pos.coords;
+
+    const { latitude: lat, longitude: lon } = pos.coords;
     statusEl.textContent = 'Fetching weather…';
 
     const data = await getWeather(lat, lon);
@@ -70,20 +86,21 @@ async function init(){
     // Current
     const c = data.current;
     const [desc, emoji] = WMO[c.weather_code] || ['—','ℹ️'];
-    el('temp').textContent = fmtTemp(c.temperature_2m);
-    el('desc').textContent = `${emoji} ${desc}`;
-    el('meta').textContent = `Feels like ${fmtTemp(c.apparent_temperature)} · Humidity ${c.relative_humidity_2m}% · Wind ${Math.round(c.wind_speed_10m)} km/h`;
-    el('location').textContent = `${data.latitude.toFixed(3)}, ${data.longitude.toFixed(3)} (${data.timezone})`;
-    el('time').textContent = new Date(c.time).toLocaleString();
+    $('temp').textContent = fmtTemp(c.temperature_2m);
+    $('desc').textContent = `${emoji} ${desc}`;
+    $('meta').textContent = `Feels like ${fmtTemp(c.apparent_temperature)} · Humidity ${c.relative_humidity_2m}% · Wind ${Math.round(c.wind_speed_10m)} km/h`;
+    $('location').textContent = `${data.latitude.toFixed(3)}, ${data.longitude.toFixed(3)} (${data.timezone})`;
+    $('time').textContent = new Date(c.time).toLocaleString();
 
     nowCard.hidden = false;
 
     // Forecast
-    const daysWrap = el('days');
+    const daysWrap = $('days');
     daysWrap.innerHTML = '';
-    const {time:dates, weather_code:wcodes, temperature_2m_max:tmax, temperature_2m_min:tmin} = data.daily;
+    const { time: dates, weather_code: codes, temperature_2m_max: tmax, temperature_2m_min: tmin } = data.daily;
+
     dates.forEach((d,i)=>{
-      const [dDesc, dEmoji] = WMO[wcodes[i]] || ['—','ℹ️'];
+      const [dDesc, dEmoji] = WMO[codes[i]] || ['—','ℹ️'];
       const div = document.createElement('div');
       div.className='day';
       div.innerHTML = `
@@ -98,8 +115,10 @@ async function init(){
 
     statusEl.remove();
   }catch(err){
-    statusEl.textContent = 'Allow location to see local weather. Or try again.';
     console.error(err);
+    if (statusEl) {
+      statusEl.textContent = 'Allow location to see local weather. You can also refresh and try again.';
+    }
   }
 }
 

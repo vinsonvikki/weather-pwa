@@ -1,19 +1,19 @@
 {
     "name": "Weather PWA",
     "short_name": "Weather",
-    "start_url": "/index.html",
-    "scope": "/",
+    "start_url": "/weather-pwa/index.html",
+    "scope": "/weather-pwa/",
     "display": "standalone",
     "background_color": "#0b1220",
     "theme_color": "#0ea5e9",
     "icons": [
         {
-            "src": "/icons/icon-192.png",
+            "src": "/weather-pwa/icons/icon-192.png",
             "sizes": "192x192",
             "type": "image/png"
         },
         {
-            "src": "/icons/icon-512.png",
+            "src": "/weather-pwa/icons/icon-512.png",
             "sizes": "512x512",
             "type": "image/png"
         }
