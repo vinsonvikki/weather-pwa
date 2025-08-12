@@ -1,0 +1,148 @@
+:root {
+    --bg: #0b1220;
+    --card: #0e1726;
+    --text: #e6ebf5;
+    --muted: #95a3b8;
+    --accent: #0ea5e9;
+}
+
+* {
+    box-sizing: border-box
+}
+
+html,
+body {
+    height: 100%
+}
+
+body {
+    margin: 0;
+    font: 16px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    color: var(--text);
+    background: linear-gradient(180deg, #0b1220, #101b33 60%, #0b1220)
+}
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    position: sticky;
+    top: 0;
+    background: rgba(11, 18, 32, .7);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(255, 255, 255, .05)
+}
+
+h1 {
+    margin: 0;
+    font-size: 20px
+}
+
+#installBtn {
+    padding: 10px 14px;
+    border: 0;
+    border-radius: 12px;
+    background: var(--accent);
+    color: #031b2e;
+    font-weight: 700;
+    cursor: pointer
+}
+
+main {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 20px;
+    display: grid;
+    gap: 16px
+}
+
+.card {
+    background: var(--card);
+    border: 1px solid rgba(255, 255, 255, .06);
+    border-radius: 16px;
+    padding: 18px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .25)
+}
+
+.now {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between
+}
+
+.now-left {
+    display: flex;
+    flex-direction: column;
+    gap: 4px
+}
+
+.temp {
+    font-size: 58px;
+    font-weight: 800
+}
+
+.desc {
+    font-size: 18px;
+    color: var(--text)
+}
+
+.meta {
+    font-size: 14px;
+    color: var(--muted)
+}
+
+.location {
+    font-size: 16px
+}
+
+.time {
+    font-size: 14px;
+    color: var(--muted)
+}
+
+.days {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 12px;
+    margin-top: 10px
+}
+
+.day {
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, .06);
+    background: rgba(255, 255, 255, .02);
+    display: flex;
+    flex-direction: column;
+    gap: 6px
+}
+
+.day .name {
+    font-weight: 700
+}
+
+.day .emoji {
+    font-size: 22px
+}
+
+.day .range {
+    color: var(--muted)
+}
+
+footer {
+    padding: 12px 20px;
+    color: var(--muted);
+    text-align: center
+}
+
+.muted {
+    color: var(--muted)
+}
+
+@media (max-width:640px) {
+    .temp {
+        font-size: 48px
+    }
+}

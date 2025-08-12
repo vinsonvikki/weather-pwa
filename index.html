@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Weather PWA</title>
+    <meta name="theme-color" content="#0ea5e9" />
+
+    <!-- iOS install helpers -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+    <header>
+        <h1>Weather</h1>
+        <button id="installBtn" hidden>Install</button>
+    </header>
+
+    <main id="app">
+        <section class="card" id="status">Initializing…</section>
+
+        <section class="card now" hidden>
+            <div class="now-left">
+                <div class="temp" id="temp">--°</div>
+                <div class="desc" id="desc">—</div>
+                <div class="meta" id="meta">—</div>
+            </div>
+            <div class="now-right">
+                <div class="location" id="location">Locating…</div>
+                <div class="time" id="time">—</div>
+            </div>
+        </section>
+
+        <section class="card forecast" hidden>
+            <h2>7‑Day Forecast</h2>
+            <div class="days" id="days"></div>
+        </section>
+    </main>
+
+    <footer>
+        <a href="offline.html" class="muted">Offline page</a>
+    </footer>
+
+    <script src="app.js" type="module"></script>
+</body>
+
+</html>
